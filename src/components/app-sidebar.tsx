@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Sidebar,
   SidebarContent,
@@ -12,11 +14,11 @@ import {
 import {
   BookText,
   ChevronDown,
-  CornerDownLeft,
   CornerDownRight,
   Mail,
   MessageSquareText,
   PenSquare,
+  PlusCircle,
 } from "lucide-react";
 import {
   Collapsible,
@@ -24,34 +26,49 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 
+import Link from "next/link";
+import { useAppStore } from "@/hooks/store";
+
 const tasks = [
-  { id: "task-1", title: "Write a formal email", icon: Mail },
-  { id: "task-2", title: "Describe your last vacation", icon: BookText },
-  { id: "task-3", title: "Start a conversation", icon: MessageSquareText },
+  { id: "formal-email", title: "Write a formal email", icon: Mail },
+  {
+    id: "describe-vacation",
+    title: "Describe your last vacation",
+    icon: BookText,
+  },
+  {
+    id: "start-conversation",
+    title: "Start a conversation",
+    icon: MessageSquareText,
+  },
 ];
 
 const evaluations = [
   {
     id: "eval-1",
-    taskId: "task-1",
+    taskId: "formal-email",
     title: "Attempt 1 - B1",
     modelUsed: "Model A",
   },
   {
     id: "eval-2",
-    taskId: "task-2",
+    taskId: "describe-vacation",
     title: "Attempt 1 - B2",
     modelUsed: "Model B",
   },
   {
     id: "eval-3",
-    taskId: "task-2",
+    taskId: "describe-vacation",
     title: "Attempt 2 - C1",
     modelUsed: "Model A",
   },
 ];
 
 export function AppSidebar() {
+  const setActiveEvaluationId = useAppStore(
+    (state) => state.setActiveEvaluationId,
+  );
+
   return (
     <Sidebar>
       <SidebarHeader className="border-b">
@@ -74,18 +91,31 @@ export function AppSidebar() {
                 </CollapsibleTrigger>
               </SidebarGroupLabel>
               <CollapsibleContent>
-                <SidebarGroupContent>
+                <SidebarGroupContent className="mt-1">
                   <SidebarMenu>
                     {evaluations
                       .filter((evaluation) => evaluation.taskId === task.id)
                       .map((evaluation) => (
                         <SidebarMenuItem key={evaluation.id}>
-                          <SidebarMenuButton className="cursor-pointer">
+                          <SidebarMenuButton
+                            onClick={() => setActiveEvaluationId(evaluation.id)}
+                            className="cursor-pointer"
+                          >
                             <CornerDownRight className="opacity-50" />
                             {evaluation.title}
                           </SidebarMenuButton>
                         </SidebarMenuItem>
                       ))}
+                    <SidebarMenuItem>
+                      <Link
+                        href={`/task/${task.id}`}
+                        className="text-muted-foreground hover:text-foreground hover:bg-primary/15 mt-1 flex h-full w-full items-center gap-2 rounded-md border border-dashed p-2 text-sm"
+                        onClick={() => setActiveEvaluationId(null)}
+                      >
+                        <PlusCircle className="size-4" />
+                        <span>Start new attempt</span>
+                      </Link>
+                    </SidebarMenuItem>
                   </SidebarMenu>
                 </SidebarGroupContent>
               </CollapsibleContent>
