@@ -54,7 +54,7 @@ const evaluations = [
 export function AppSidebar() {
   return (
     <Sidebar>
-      <SidebarHeader>
+      <SidebarHeader className="border-b">
         <div className="text-primary flex items-center gap-2 p-2">
           <PenSquare className="size-6" />
           <h1 className="text-lg font-semibold">CEFR Writer</h1>
@@ -65,7 +65,7 @@ export function AppSidebar() {
           <Collapsible key={task.id} className="group/collapsible">
             <SidebarGroup>
               <SidebarGroupLabel asChild>
-                <CollapsibleTrigger className="w-full">
+                <CollapsibleTrigger className="w-full cursor-pointer">
                   <div className="flex items-center gap-2">
                     <task.icon className="size-4" />
                     <span>{task.title}</span>
@@ -80,7 +80,7 @@ export function AppSidebar() {
                       .filter((evaluation) => evaluation.taskId === task.id)
                       .map((evaluation) => (
                         <SidebarMenuItem key={evaluation.id}>
-                          <SidebarMenuButton>
+                          <SidebarMenuButton className="cursor-pointer">
                             <CornerDownRight className="opacity-50" />
                             {evaluation.title}
                           </SidebarMenuButton>
