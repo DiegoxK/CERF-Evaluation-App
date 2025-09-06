@@ -20,9 +20,9 @@ export default function RootLayout({
     <html lang="en" className="dark">
       <body className={inter.className}>
         <SidebarProvider>
-          <div className="flex min-h-screen">
+          <div className="flex min-h-screen w-full">
             <AppSidebar />
-            <main className="flex-1 p-4 md:p-6">{children}</main>
+            <main className="flex-1">{children}</main>
           </div>
         </SidebarProvider>
       </body>
