@@ -5,11 +5,19 @@ import { Textarea } from "@/components/ui/textarea";
 import type { Task } from "@/lib/types";
 import { useState } from "react";
 
-export const TaskView = ({ task }: { task: Task }) => {
+interface TaskViewProps {
+  task: Task;
+  onEvaluate: (text: string) => void;
+}
+
+export const TaskView = ({ task, onEvaluate }: TaskViewProps) => {
   const [textValue, setTextValue] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (textValue.trim()) {
+      onEvaluate(textValue);
+    }
   };
 
   return (
