@@ -11,6 +11,7 @@ import { useEffect } from "react";
 import { experimental_useObject as useObject } from "@ai-sdk/react";
 import { evaluationSchema } from "@/lib/schemas";
 import { toast } from "sonner";
+import { JsonDebugViewer } from "./_components/ui/json-debug-viewer";
 
 export default function TaskPage() {
   const {
@@ -82,6 +83,10 @@ export default function TaskPage() {
         activeTask={activeTask}
       />
       <main className="container mx-auto flex flex-1 flex-col p-8">
+        {/* <JsonDebugViewer
+          object={activeEvaluation}
+          title="Debug View: Live Evaluation Object"
+        /> */}
         <RenderContent />
       </main>
     </div>
