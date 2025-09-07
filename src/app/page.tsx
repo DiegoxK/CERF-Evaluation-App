@@ -7,28 +7,68 @@ import { tasks } from "@/lib/mock-data";
 import { TaskView } from "./_components/task-view";
 import { WelcomeView } from "./_components/welcome-view";
 
+import { useEffect } from "react";
+import { experimental_useObject as useObject } from "@ai-sdk/react";
+import { evaluationSchema } from "@/lib/schemas";
+import { toast } from "sonner";
+
 export default function TaskPage() {
-  const { activeView, activeTaskId, activeEvaluationId, evaluations } =
-    useAppStore();
+  const {
+    activeView,
+    activeTaskId,
+    activeEvaluationId,
+    evaluations,
+    startEvaluation,
+    updateEvaluation,
+    saveEvaluations,
+  } = useAppStore();
+
+  const { object, submit, error, isLoading } = useObject({
+    api: "/api/evaluate",
+    schema: evaluationSchema,
+    onFinish: () => {
+      saveEvaluations();
+      toast.success("Evaluation complete!");
+    },
+    onError: (err) => {
+      toast.error("Evaluation failed", { description: err.message });
+    },
+  });
+
+  useEffect(() => {
+    if (activeEvaluationId && object) {
+      updateEvaluation(activeEvaluationId, object);
+    }
+  }, [object, activeEvaluationId, updateEvaluation]);
 
   const activeTask = tasks.find((task) => task.id === activeTaskId);
   const activeEvaluation = evaluations.find((e) => e.id === activeEvaluationId);
-
   const isViewingEvaluation = activeEvaluation != null;
+
+  const handleEvaluate = (userText: string) => {
+    if (!activeTaskId) {
+      toast.error("No active task selected.");
+      return;
+    }
+    startEvaluation(activeTaskId, userText);
+    submit({ text: userText });
+  };
 
   const RenderContent = () => {
     switch (activeView) {
       case "evaluation-viewer":
         if (!activeEvaluation) return null;
+
         return (
           <EvaluationReport
             evaluationData={activeEvaluation}
-            modelName="Model A"
+            isLoading={isLoading}
+            modelName="Claude 3.5 Sonnet"
           />
         );
       case "task-editor":
         if (!activeTask) return null;
-        return <TaskView task={activeTask} />;
+        return <TaskView task={activeTask} onEvaluate={handleEvaluate} />;
       case "task-list":
       default:
         return <WelcomeView />;
