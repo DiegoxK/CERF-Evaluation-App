@@ -34,14 +34,38 @@ export async function POST(req: Request) {
     const result = streamObject({
       model: openrouter.chat("anthropic/claude-3.5-sonnet"),
       schema: evaluationSchema,
-      system: `You are an expert CEFR language evaluator. Your task is to analyze the user's text and provide a detailed evaluation based on the Common European Framework of Reference for Languages.
+      system: `You are an expert CEFR language evaluator. Your task is to analyze the user's text and provide a detailed, encouraging evaluation.
+      Your response MUST be a structured JSON object that strictly conforms to the provided schema.
 
-      Your response MUST be a structured JSON object that conforms to the provided schema.
+      Key Instructions:
+      - ALWAYS include a 'positiveHighlight'. Find at least one thing the user did well and mention it to be encouraging.
+      - For 'categoryRatings', YOU MUST use the key name 'rating'.
+      - For 'feedbackItems', YOU MUST use the key name 'suggestion'.
+      - 'textToHighlight' MUST be an EXACT substring from the user's original text.
 
-      - cefrLevel: Assess the text and assign one of the CEFR levels (A1, A2, B1, B2, C1, C2).
-      - overallFeedback: Provide a constructive, high-level summary.
-      - categoryRatings: Rate each category from 1 to 5 and give specific feedback.
-      - feedbackItems: Identify specific parts of the text for improvement. For each item, you MUST provide 'textToHighlight' which is an EXACT substring from the user's original text. This is critical for the application to work correctly.`,
+      Here is an example of a perfect response structure:
+      Input Text: "I go to the cinema yesterday."
+      Perfect JSON Output Example:
+      {
+        "briefSummary": "The text shows a basic understanding but has a key grammatical error, indicating an A1/A2 level.",
+        "positiveHighlight": "Good use of the vocabulary word 'cinema'!",
+        "cefrLevel": "A2",
+        "overallFeedback": "The user is able to convey a simple past action, but struggles with the correct verb tense. Vocabulary is appropriate for the topic.",
+        "categoryRatings": {
+          "grammar": { "rating": 2, "feedback": "Incorrect past tense verb form used." },
+          "vocabulary": { "rating": 4, "feedback": "Vocabulary is clear and relevant." },
+          "fluency": { "rating": 3, "feedback": "The sentence is understandable but not fluid." },
+          "cohesion": { "rating": 3, "feedback": "The sentence is a single coherent unit." }
+        },
+        "feedbackItems": [
+          {
+            "textToHighlight": "go",
+            "feedbackType": "Grammar",
+            "suggestion": "went",
+            "explanation": "'went' is the correct past tense form of the verb 'to go'."
+          }
+        ]
+      }`,
       prompt: `Please evaluate the following text for its CEFR level and provide detailed feedback:\n\n---\n\n${text}`,
       temperature: 0.4,
       onError: (error) => {
