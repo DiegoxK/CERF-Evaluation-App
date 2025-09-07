@@ -36,10 +36,10 @@ export default function TaskPage() {
   });
 
   useEffect(() => {
-    if (activeEvaluationId && object) {
+    if (isLoading && activeEvaluationId && object) {
       updateEvaluation(activeEvaluationId, object);
     }
-  }, [object, activeEvaluationId, updateEvaluation]);
+  }, [object, activeEvaluationId, updateEvaluation, isLoading]);
 
   const activeTask = tasks.find((task) => task.id === activeTaskId);
   const activeEvaluation = evaluations.find((e) => e.id === activeEvaluationId);
