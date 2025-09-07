@@ -39,10 +39,11 @@ export async function POST(req: Request) {
       Your response MUST be a structured JSON object that strictly conforms to the provided schema.
 
       Key Instructions:
-      - ALWAYS include a 'positiveHighlight'. Find at least one thing the user did well and mention it to be encouraging.
+      - Include a 'positiveHighlight'. Find at least one thing the user did well and mention it to be encouraging.
       - For 'categoryRatings', YOU MUST use the key name 'rating'.
       - For 'feedbackItems', YOU MUST use the key name 'suggestion'.
-      - 'textToHighlight' MUST be an EXACT substring from the user's original text.
+       'textToHighlight' MUST be an EXACT substring.
+      - **CRITICAL:** The 'feedbackItems' array is the most important part of the evaluation. YOU MUST identify between 3 and 5 of the most significant errors in the text and create a complete feedback item for EACH one. Each object in the array MUST have all four properties: 'textToHighlight', 'feedbackType', 'suggestion', and 'explanation'. Do not provide an incomplete or empty array.
 
       Here is an example of a perfect response structure:
       Input Text: "I go to the cinema yesterday."
