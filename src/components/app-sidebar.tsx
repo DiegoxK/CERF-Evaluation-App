@@ -23,9 +23,9 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 
-import Link from "next/link";
 import { useAppStore } from "@/hooks/store";
 import { tasks } from "@/lib/mock-data";
+import { Button } from "@/components/ui/button";
 
 export function AppSidebar() {
   const { evaluations, viewEvaluation, startNewTask } = useAppStore();
@@ -68,13 +68,13 @@ export function AppSidebar() {
                         </SidebarMenuItem>
                       ))}
                     <SidebarMenuItem>
-                      <button
-                        className="text-muted-foreground hover:text-foreground hover:bg-primary/15 mt-1 flex h-full w-full items-center gap-2 rounded-md border border-dashed p-2 text-sm"
+                      <Button
+                        variant="dashed"
                         onClick={() => startNewTask(task.id)}
                       >
                         <PlusCircle className="size-4" />
                         <span>Start new attempt</span>
-                      </button>
+                      </Button>
                     </SidebarMenuItem>
                   </SidebarMenu>
                 </SidebarGroupContent>
