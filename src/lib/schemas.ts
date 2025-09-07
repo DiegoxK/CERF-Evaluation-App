@@ -13,8 +13,10 @@ export const feedbackItemSchema = z.object({
       "The exact text from the user's input that this feedback pertains to. This must be a direct substring.",
     ),
   feedbackType: z
-    .enum(["Grammar", "Vocabulary", "Style", "Clarity", "Cohesion"])
-    .describe("The category of the feedback."),
+    .string()
+    .describe(
+      "A category for the feedback, e.g., Grammar, Spelling, Punctuation, Style.",
+    ),
   suggestion: z
     .string()
     .describe("The suggested improvement for the highlighted text."),
@@ -33,6 +35,17 @@ export const categoryRatingSchema = z.object({
 });
 
 export const evaluationSchema = z.object({
+  briefSummary: z
+    .string()
+    .describe(
+      "A very short, one-sentence summary of the CEFR level assessment. This should be generated first.",
+    ),
+  positiveHighlight: z
+    .string()
+    .optional()
+    .describe(
+      "A brief mention of one thing the user did well. Be encouraging.",
+    ),
   cefrLevel: z
     .enum(["A1", "A2", "B1", "B2", "C1", "C2"])
     .describe("The assessed CEFR level of the text."),
