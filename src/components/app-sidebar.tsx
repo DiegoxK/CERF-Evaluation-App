@@ -28,12 +28,18 @@ import { tasks } from "@/lib/mock-data";
 import { Button } from "@/components/ui/button";
 
 export function AppSidebar() {
-  const { evaluations, viewEvaluation, startNewTask } = useAppStore();
+  const { evaluations, viewEvaluation, startNewTask, clearActive } =
+    useAppStore();
 
   return (
     <Sidebar>
       <SidebarHeader className="border-b">
-        <div className="text-primary flex items-center gap-2 p-2">
+        <div
+          onClick={() => {
+            clearActive();
+          }}
+          className="text-primary flex cursor-pointer items-center gap-2 p-2"
+        >
           <PenSquare className="size-6" />
           <h1 className="text-lg font-semibold">CEFR Writer</h1>
         </div>
