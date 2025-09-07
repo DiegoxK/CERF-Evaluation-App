@@ -1,39 +1,31 @@
+import type { z } from "zod";
 import { type LucideIcon } from "lucide-react";
+import {
+  type evaluationSchema,
+  type categoryRatingSchema,
+  type feedbackItemSchema,
+} from "./schemas";
 
-export interface Task {
-  id: string;
-  title: string;
-  icon: LucideIcon;
-}
+export type DeepPartial<T> = T extends object
+  ? {
+      [P in keyof T]?: DeepPartial<T[P]>;
+    }
+  : T;
 
-export interface FeedbackItem {
-  textToHighlight: string;
-  feedbackType: string;
-  suggestion: string;
-  explanation: string;
-}
-
-export interface CategoryRating {
-  rating: number;
-  feedback: string;
-}
+export type EvaluationReportData = z.infer<typeof evaluationSchema>;
+export type CategoryRating = z.infer<typeof categoryRatingSchema>;
+export type FeedbackItem = z.infer<typeof feedbackItemSchema>;
 
 export interface Evaluation {
   id: string;
   title: string;
   taskId: string;
   userText: string;
-  evaluation?: {
-    briefSummary?: string;
-    positiveHighlight?: string;
-    cefrLevel?: "A1" | "A2" | "B1" | "B2" | "C1" | "C2";
-    overallFeedback?: string;
-    categoryRatings?: {
-      grammar?: CategoryRating;
-      vocabulary?: CategoryRating;
-      fluency?: CategoryRating;
-      cohesion?: CategoryRating;
-    };
-    feedbackItems?: (FeedbackItem | undefined)[];
-  };
+  evaluation: DeepPartial<EvaluationReportData>;
+}
+
+export interface Task {
+  id: string;
+  title: string;
+  icon: LucideIcon;
 }
