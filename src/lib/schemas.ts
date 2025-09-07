@@ -42,7 +42,7 @@ export const evaluationSchema = z.object({
     ),
   positiveHighlight: z
     .string()
-    .optional()
+    .nullable()
     .describe(
       "A brief mention of one thing the user did well. Be encouraging.",
     ),
