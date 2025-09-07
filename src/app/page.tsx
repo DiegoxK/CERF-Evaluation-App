@@ -2,17 +2,12 @@
 
 import Header from "@/components/header";
 import { useAppStore } from "@/hooks/store";
-import { useParams } from "next/navigation";
 import { EvaluationReport } from "./_components/evaluation-report";
-import { CefrBadge } from "./_components/ui/cefr-badge";
 import { tasks } from "@/lib/mock-data";
 import { TaskView } from "./_components/task-view";
 import { WelcomeView } from "./_components/welcome-view";
 
 export default function TaskPage() {
-  const params = useParams();
-  const taskId = params.taskId as string;
-
   const { activeView, activeTaskId, activeEvaluationId, evaluations } =
     useAppStore();
 
@@ -42,7 +37,10 @@ export default function TaskPage() {
 
   return (
     <div className="flex h-full flex-col">
-      <Header isViewingEvaluation={isViewingEvaluation} taskId={taskId} />
+      <Header
+        isViewingEvaluation={isViewingEvaluation}
+        activeTask={activeTask}
+      />
       <main className="container mx-auto flex flex-1 flex-col p-8">
         <RenderContent />
       </main>
