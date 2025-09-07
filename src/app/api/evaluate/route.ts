@@ -1,4 +1,4 @@
-import { streamObject } from "ai";
+import { AISDKError, streamObject } from "ai";
 import { createOpenRouter } from "@openrouter/ai-sdk-provider";
 import { env } from "@/env";
 import { evaluationSchema, evaluateRequestSchema } from "@/lib/schemas";
@@ -33,6 +33,7 @@ export async function POST(req: Request) {
 
     const result = streamObject({
       model: openrouter.chat("anthropic/claude-3.5-sonnet"),
+      // model: openrouter.chat("openai/gpt-5"),
       schema: evaluationSchema,
       system: `You are an expert CEFR language evaluator. Your task is to analyze the user's text and provide a detailed, encouraging evaluation.
       Your response MUST be a structured JSON object that strictly conforms to the provided schema.
@@ -69,6 +70,9 @@ export async function POST(req: Request) {
       prompt: `Please evaluate the following text for its CEFR level and provide detailed feedback:\n\n---\n\n${text}`,
       temperature: 0.4,
       onError: (error) => {
+        if (error instanceof AISDKError) {
+          throw new Error(`AI SDK Error: ${error.message}`);
+        }
         console.error("Error during evaluation:", error);
       },
       onFinish: () => {
