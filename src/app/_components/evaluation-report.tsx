@@ -1,5 +1,4 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import type { mockEvaluationData } from "./mock";
 import type { ReactElement } from "react";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -7,14 +6,16 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { StarRating } from "./star-rating";
+import { StarRating } from "./ui/star-rating";
+import type { Evaluation, FeedbackItem } from "@/lib/types";
+import { CefrBadge } from "./ui/cefr-badge";
 
 const HighlightedText = ({
   text,
   feedbackItems,
 }: {
   text: string;
-  feedbackItems: typeof mockEvaluationData.evaluation.feedbackItems;
+  feedbackItems: FeedbackItem[];
 }) => {
   let lastIndex = 0;
   const parts: (string | ReactElement)[] = [];
@@ -66,10 +67,13 @@ export const EvaluationReport = ({
   evaluationData,
   modelName,
 }: {
-  evaluationData: typeof mockEvaluationData;
+  evaluationData: Evaluation;
   modelName: string;
 }) => (
   <div className="space-y-6">
+    <div className="my-4 flex justify-center">
+      <CefrBadge level={evaluationData?.evaluation.cefrLevel} />
+    </div>
     <h3 className="text-xl font-semibold">CERF Evaluation Report</h3>
     <div className="grid grid-cols-2 gap-6">
       <Card>
