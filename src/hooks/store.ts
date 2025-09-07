@@ -4,7 +4,6 @@ import {
   type Evaluation,
   type EvaluationReportData,
 } from "@/lib/types";
-import { initialEvaluations } from "@/lib/mock-data";
 import { v4 as uuidv4 } from "uuid";
 
 const LOCAL_STORAGE_KEY = "cefr-app-evaluations";
@@ -31,14 +30,14 @@ interface AppState {
 
 const loadFromLocalStorage = (): Evaluation[] => {
   if (typeof window === "undefined") {
-    return initialEvaluations;
+    return [];
   }
   try {
     const item = window.localStorage.getItem(LOCAL_STORAGE_KEY);
-    return item ? (JSON.parse(item) as Evaluation[]) : initialEvaluations;
+    return item ? (JSON.parse(item) as Evaluation[]) : [];
   } catch (error) {
     console.error("Failed to load evaluations from LocalStorage:", error);
-    return initialEvaluations;
+    return [];
   }
 };
 
