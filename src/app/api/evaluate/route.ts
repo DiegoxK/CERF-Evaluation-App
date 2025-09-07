@@ -32,8 +32,7 @@ export async function POST(req: Request) {
     const { text } = parseResult.data;
 
     const result = streamObject({
-      model: openrouter.chat("anthropic/claude-3.5-sonnet"),
-      // model: openrouter.chat("openai/gpt-5"),
+      model: openrouter.chat("google/gemini-2.0-flash-001"),
       schema: evaluationSchema,
       system: `You are an expert CEFR language evaluator. Your task is to analyze the user's text and provide a detailed, encouraging evaluation.
       Your response MUST be a structured JSON object that strictly conforms to the provided schema.
@@ -43,7 +42,9 @@ export async function POST(req: Request) {
       - For 'categoryRatings', YOU MUST use the key name 'rating'.
       - For 'feedbackItems', YOU MUST use the key name 'suggestion'.
        'textToHighlight' MUST be an EXACT substring.
-      - **CRITICAL:** The 'feedbackItems' array is the most important part of the evaluation. YOU MUST identify between 3 and 5 of the most significant errors in the text and create a complete feedback item for EACH one. Each object in the array MUST have all four properties: 'textToHighlight', 'feedbackType', 'suggestion', and 'explanation'. Do not provide an incomplete or empty array.
+      - **CRITICAL:** The 'feedbackItems' array is the most important part of the evaluation. YOU MUST diligently search for errors in the text.
+      - If you find any errors, you MUST create a complete feedback item for EACH of the most significant ones you identify. Each object in the array MUST be complete with all four properties: 'textToHighlight', 'feedbackType', 'suggestion', and 'explanation'.
+      - If the text is genuinely flawless (C2 level), the 'feedbackItems' array should be empty. Do not invent errors.
 
       Here is an example of a perfect response structure:
       Input Text: "I go to the cinema yesterday."
@@ -69,7 +70,7 @@ export async function POST(req: Request) {
         ]
       }`,
       prompt: `Please evaluate the following text for its CEFR level and provide detailed feedback:\n\n---\n\n${text}`,
-      temperature: 0.4,
+      temperature: 0.3,
       onError: (error) => {
         if (error instanceof AISDKError) {
           throw new Error(`AI SDK Error: ${error.message}`);
