@@ -9,13 +9,24 @@ import { StarRating } from "./ui/star-rating";
 import type { Evaluation, FeedbackItem } from "@/lib/types";
 import { CefrBadge } from "./ui/cefr-badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Badge } from "@/components/ui/badge";
 import {
-  ArrowRight,
   CheckCircle2,
   MessageSquareText,
   Clipboard,
+  SpellCheck,
+  BookText,
+  Feather,
+  Link2,
+  HelpCircle,
 } from "lucide-react";
+import { DetailedSuggestionCard } from "./ui/detailed-suggestion-card";
+
+const categoryIconMap: Record<string, React.ElementType> = {
+  grammar: SpellCheck,
+  vocabulary: BookText,
+  fluency: Feather,
+  cohesion: Link2,
+};
 
 const HighlightedText = ({
   text,
@@ -90,10 +101,10 @@ export const EvaluationReport = ({
     <div className="animate-fade-in space-y-8">
       <div className="space-y-4">
         <div className="flex justify-center">
-          {/* TODO: Provide a default value or handle undefined */}
           <CefrBadge
             level={evaluation?.cefrLevel ?? "..."}
             isLoading={isLoading}
+            className="my-8"
           />
         </div>
         {(isLoading || evaluation?.positiveHighlight) && (
@@ -152,30 +163,48 @@ export const EvaluationReport = ({
         </Card>
       </div>
 
-      {/* --- CATEGORY BREAKDOWN --- */}
       <div>
         <h3 className="mb-4 text-xl font-semibold">Category Breakdown</h3>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          {evaluation?.categoryRatings &&
-          Object.keys(evaluation.categoryRatings).length > 0 ? (
-            Object.entries(evaluation.categoryRatings).map(
-              ([category, details]) =>
-                details && (
-                  <Card key={category}>
-                    <CardHeader>
-                      <CardTitle className="flex items-center justify-between text-lg">
+          {isLoading ||
+          (evaluation?.categoryRatings &&
+            Object.keys(evaluation.categoryRatings).length > 0) ? (
+            Object.entries(
+              evaluation.categoryRatings ?? {
+                grammar: undefined,
+                vocabulary: undefined,
+                fluency: undefined,
+                cohesion: undefined,
+              },
+            ).map(([category, details]) => {
+              const Icon = categoryIconMap[category] ?? HelpCircle;
+              return (
+                <Card key={category}>
+                  <CardHeader>
+                    <CardTitle className="flex items-center justify-between text-lg">
+                      <div className="flex items-center gap-2">
+                        <Icon className="text-muted-foreground h-5 w-5" />
                         <span className="capitalize">{category}</span>
+                      </div>
+                      {details ? (
                         <StarRating rating={details.rating ?? 0} />
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <p className="text-muted-foreground text-sm">
-                        {details.feedback}
-                      </p>
-                    </CardContent>
-                  </Card>
-                ),
-            )
+                      ) : (
+                        <Skeleton className="h-5 w-28" />
+                      )}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-muted-foreground text-sm">
+                      {details ? (
+                        details.feedback
+                      ) : (
+                        <Skeleton className="h-10 w-full" />
+                      )}
+                    </p>
+                  </CardContent>
+                </Card>
+              );
+            })
           ) : (
             <>
               <Skeleton className="h-32 w-full" />
@@ -191,35 +220,18 @@ export const EvaluationReport = ({
         <div>
           <h3 className="mb-4 text-xl font-semibold">Detailed Suggestions</h3>
           <div className="space-y-4">
-            {hasFeedbackItems ? (
-              evaluation.feedbackItems!.map((item, index) =>
-                item ? (
-                  <Card key={index} className="overflow-hidden">
-                    <CardHeader>
-                      <CardTitle className="flex flex-wrap items-center gap-3 text-base">
-                        <Badge variant="secondary">{item.feedbackType}</Badge>
-                        <span className="text-muted-foreground line-through">
-                          {item.textToHighlight}
-                        </span>
-                        <ArrowRight size={16} className="mx-1 shrink-0" />
-                        <span className="font-semibold text-green-600 dark:text-green-400">
-                          {item.suggestion}
-                        </span>
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <p className="text-muted-foreground text-sm">
-                        {item.explanation}
-                      </p>
-                    </CardContent>
-                  </Card>
-                ) : null,
-              )
-            ) : (
+            {!evaluation?.feedbackItems && isLoading && (
               <>
                 <Skeleton className="h-28 w-full" />
                 <Skeleton className="h-28 w-full" />
               </>
+            )}
+            {evaluation?.feedbackItems?.map((item, index) =>
+              item ? (
+                <DetailedSuggestionCard key={index} item={item} />
+              ) : (
+                <Skeleton key={`skel-${index}`} className="h-28 w-full" />
+              ),
             )}
           </div>
         </div>
