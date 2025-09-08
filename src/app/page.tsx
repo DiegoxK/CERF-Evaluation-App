@@ -3,7 +3,7 @@
 import Header from "@/components/header";
 import { useAppStore } from "@/hooks/store";
 import { EvaluationReport } from "./_components/evaluation-report";
-import { tasks } from "@/lib/mock-data";
+import { tasks } from "@/lib/tasks";
 import { TaskView } from "./_components/task-view";
 import { WelcomeView } from "./_components/welcome-view";
 
@@ -47,12 +47,15 @@ export default function TaskPage() {
   const isViewingEvaluation = activeEvaluation != null;
 
   const handleEvaluate = (userText: string) => {
-    if (!activeTaskId) {
-      toast.error("No active task selected.");
+    if (!activeTask?.description) {
+      toast.error("No active task selected or task has no description.");
       return;
     }
-    startEvaluation(activeTaskId, userText);
-    submit({ text: userText });
+    startEvaluation(activeTask.id, userText);
+    submit({
+      text: userText,
+      taskDescription: activeTask.description,
+    });
   };
 
   const RenderContent = () => {
@@ -83,10 +86,10 @@ export default function TaskPage() {
         activeTask={activeTask}
       />
       <main className="container mx-auto flex flex-1 flex-col p-8">
-        {/* <JsonDebugViewer
+        <JsonDebugViewer
           object={activeEvaluation}
           title="Debug View: Live Evaluation Object"
-        /> */}
+        />
         <RenderContent />
       </main>
     </div>
