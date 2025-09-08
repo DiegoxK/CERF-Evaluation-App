@@ -2,6 +2,8 @@
 
 import Header from "@/components/header";
 import { useAppStore } from "@/hooks/store";
+import { useSettingsStore } from "@/hooks/settings-store";
+import { useRateLimitStore } from "@/hooks/ratelimit-store";
 import { EvaluationReport } from "./_components/evaluation-report";
 import { tasks } from "@/lib/tasks";
 import { TaskView } from "./_components/task-view";
@@ -12,7 +14,6 @@ import { experimental_useObject as useObject } from "@ai-sdk/react";
 import { evaluationSchema } from "@/lib/schemas";
 import { toast } from "sonner";
 import { JsonDebugViewer } from "./_components/ui/json-debug-viewer";
-import { useSettingsStore } from "@/hooks/settings-store";
 
 export default function TaskPage() {
   const {
@@ -26,6 +27,7 @@ export default function TaskPage() {
   } = useAppStore();
 
   const { apiKey } = useSettingsStore();
+  const { setRateLimit } = useRateLimitStore();
 
   const requestHeaders: Record<string, string> | undefined = useMemo(() => {
     if (apiKey) {
@@ -35,10 +37,24 @@ export default function TaskPage() {
     return undefined;
   }, [apiKey]);
 
+  const customFetch: typeof fetch = async (url, options) => {
+    const response = await fetch(url, options);
+
+    const limit = response.headers.get("X-RateLimit-Limit");
+    const remaining = response.headers.get("X-RateLimit-Remaining");
+
+    if (limit !== null && remaining !== null) {
+      setRateLimit(Number(limit), Number(remaining));
+    }
+
+    return response;
+  };
+
   const { object, submit, error, isLoading } = useObject({
     api: "/api/evaluate",
     schema: evaluationSchema,
     headers: requestHeaders,
+    fetch: customFetch,
     onFinish: () => {
       saveEvaluations();
       toast.success("Evaluation complete!");
