@@ -28,4 +28,5 @@ export interface Task {
   id: string;
   title: string;
   icon: LucideIcon;
+  description: string;
 }

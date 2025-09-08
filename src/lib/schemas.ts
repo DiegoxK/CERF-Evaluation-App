@@ -4,6 +4,7 @@ export const evaluateRequestSchema = z.object({
   text: z
     .string()
     .min(10, { message: "Text must be at least 10 characters long." }),
+  taskDescription: z.string(),
 });
 
 export const feedbackItemSchema = z.object({
