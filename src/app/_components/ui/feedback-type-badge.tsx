@@ -20,6 +20,8 @@ const feedbackColorMap: Record<string, string> = {
     "border-yellow-400/20 bg-yellow-100 text-yellow-800 dark:bg-yellow-600 dark:text-yellow-100",
   Capitalization:
     "border-red-400/20 bg-red-100 text-red-800 dark:bg-red-950 dark:text-red-400",
+  Content:
+    "border-teal-400/20 bg-teal-100 text-teal-800 dark:bg-teal-950 dark:text-teal-400",
 };
 
 const defaultColor =
