@@ -7,11 +7,12 @@ import { tasks } from "@/lib/tasks";
 import { TaskView } from "./_components/task-view";
 import { WelcomeView } from "./_components/welcome-view";
 
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { experimental_useObject as useObject } from "@ai-sdk/react";
 import { evaluationSchema } from "@/lib/schemas";
 import { toast } from "sonner";
 import { JsonDebugViewer } from "./_components/ui/json-debug-viewer";
+import { useSettingsStore } from "@/hooks/settings-store";
 
 export default function TaskPage() {
   const {
@@ -24,9 +25,20 @@ export default function TaskPage() {
     saveEvaluations,
   } = useAppStore();
 
+  const { apiKey } = useSettingsStore();
+
+  const requestHeaders: Record<string, string> | undefined = useMemo(() => {
+    if (apiKey) {
+      return { Authorization: `Bearer ${apiKey}` };
+    }
+
+    return undefined;
+  }, [apiKey]);
+
   const { object, submit, error, isLoading } = useObject({
     api: "/api/evaluate",
     schema: evaluationSchema,
+    headers: requestHeaders,
     onFinish: () => {
       saveEvaluations();
       toast.success("Evaluation complete!");
