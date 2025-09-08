@@ -24,7 +24,7 @@ import {
 } from "@/components/ui/collapsible";
 
 import { useAppStore } from "@/hooks/store";
-import { tasks } from "@/lib/mock-data";
+import { tasks } from "@/lib/tasks";
 import { Button } from "@/components/ui/button";
 
 export function AppSidebar() {
