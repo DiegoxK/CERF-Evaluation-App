@@ -26,6 +26,9 @@ interface AppState {
     partialData: DeepPartial<EvaluationReportData>,
   ) => void;
   saveEvaluations: () => void;
+
+  renameEvaluation: (evaluationId: string, newTitle: string) => void;
+  deleteEvaluation: (evaluationId: string) => void;
 }
 
 const loadFromLocalStorage = (): Evaluation[] => {
@@ -93,6 +96,37 @@ export const useAppStore = create<AppState>((set, get) => ({
     }));
 
     return newEvaluationId;
+  },
+
+  renameEvaluation: (evaluationId, newTitle) => {
+    set((state) => ({
+      evaluations: state.evaluations.map((e) =>
+        e.id === evaluationId ? { ...e, title: newTitle } : e,
+      ),
+    }));
+
+    get().saveEvaluations();
+  },
+
+  deleteEvaluation: (evaluationId) => {
+    set((state) => {
+      const newEvaluations = state.evaluations.filter(
+        (e) => e.id !== evaluationId,
+      );
+
+      if (state.activeEvaluationId === evaluationId) {
+        return {
+          evaluations: newEvaluations,
+          activeView: "task-list",
+          activeEvaluationId: null,
+          activeTaskId: null,
+        };
+      }
+
+      return { evaluations: newEvaluations };
+    });
+
+    get().saveEvaluations();
   },
 
   updateEvaluation: (evaluationId, partialData) => {
