@@ -1,10 +1,4 @@
-import {
-  ArrowLeft,
-  ClipboardCheck,
-  ListChecks,
-  PenSquare,
-  Sparkles,
-} from "lucide-react";
+import { ArrowLeft, ListChecks, PenSquare, Sparkles } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FaReact, FaNodeJs } from "react-icons/fa";
 import { SiNextdotjs, SiTypescript, SiVercel, SiOpenai } from "react-icons/si";
@@ -39,7 +33,6 @@ const TechIcon = ({ icon, name }: { icon: React.ReactNode; name: string }) => (
 export const WelcomeView = () => {
   return (
     <div className="animate-fade-in mx-auto flex max-w-4xl flex-col items-center space-y-12 py-8 text-center">
-      {/* 1. Hero Section */}
       <div className="space-y-4">
         <h1 className="from-primary bg-gradient-to-r to-purple-500 bg-clip-text text-4xl font-bold tracking-tight text-transparent md:text-5xl">
           Unlock Your English Proficiency
@@ -50,7 +43,6 @@ export const WelcomeView = () => {
         </p>
       </div>
 
-      {/* 2. How It Works Section */}
       <div className="grid w-full grid-cols-1 gap-6 md:grid-cols-3">
         <FeatureCard icon={<ListChecks size={24} />} title="1. Select a Task">
           Choose a writing prompt from the sidebar to get started. Each task is
@@ -69,7 +61,6 @@ export const WelcomeView = () => {
         </FeatureCard>
       </div>
 
-      {/* 3. Call to Action */}
       <div className="bg-card flex items-center gap-4 rounded-lg border p-4">
         <ArrowLeft className="text-primary h-6 w-6" />
         <p className="font-medium">
@@ -77,13 +68,13 @@ export const WelcomeView = () => {
         </p>
       </div>
 
-      {/* 4. Tech Stack Showcase */}
       <div className="w-full space-y-4 rounded-lg border border-dashed p-6">
         <h3 className="text-muted-foreground text-sm font-semibold uppercase">
           Powered By Modern Technology
         </h3>
         <div className="flex flex-wrap items-center justify-center gap-8 pt-2">
           <TechIcon icon={<SiNextdotjs size={28} />} name="Next.js" />
+          <TechIcon icon={<FaNodeJs size={28} />} name="Node.js" />
           <TechIcon icon={<FaReact size={28} />} name="React" />
           <TechIcon icon={<SiTypescript size={28} />} name="TypeScript" />
           <TechIcon icon={<SiOpenai size={28} />} name="Vercel AI SDK" />
