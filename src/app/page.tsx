@@ -86,10 +86,10 @@ export default function TaskPage() {
         activeTask={activeTask}
       />
       <main className="container mx-auto flex flex-1 flex-col p-8">
-        <JsonDebugViewer
+        {/* <JsonDebugViewer
           object={activeEvaluation}
           title="Debug View: Live Evaluation Object"
-        />
+        /> */}
         <RenderContent />
       </main>
     </div>

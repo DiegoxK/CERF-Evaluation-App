@@ -3,18 +3,96 @@ import { createOpenRouter } from "@openrouter/ai-sdk-provider";
 import { env } from "@/env";
 import { evaluationSchema, evaluateRequestSchema } from "@/lib/schemas";
 
+import { Ratelimit } from "@upstash/ratelimit";
+import { Redis } from "@upstash/redis";
+import { checkBotId } from "botid/server";
+import { type NextRequest, NextResponse } from "next/server";
+
 export const maxDuration = 60;
 
-const openrouter = createOpenRouter({
-  apiKey: env.OPENROUTER_API_KEY,
-  headers: {
-    "HTTP-Referer": "http://localhost:3000",
-    "X-Title": "CEFR Text Evaluation App",
-  },
+const ratelimit = new Ratelimit({
+  redis: Redis.fromEnv(),
+  limiter: Ratelimit.slidingWindow(5, "5 m"),
+  analytics: true,
+  prefix: "@upstash/ratelimit",
 });
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
   try {
+    console.log("\n🛡️  Initiating security checks for incoming request...");
+
+    const authorizationHeader = req.headers.get("Authorization");
+    console.log(
+      `[SECURITY-DEBUG] Authorization header received: ${authorizationHeader ? "Present" : "Not Present"}`,
+    );
+
+    if (authorizationHeader === `Bearer ${env.INTERNAL_API_SECRET}`) {
+      console.log(
+        "✅ [SECURITY] Developer bypass successful. Skipping Bot & Rate Limit checks.",
+      );
+    } else {
+      console.log(
+        "ℹ️  [SECURITY] No valid developer bypass key. Proceeding with public checks.",
+      );
+
+      console.log("🤖 [SECURITY] Performing BotID check...");
+      const botCheck = await checkBotId();
+      if (botCheck.isBot) {
+        console.warn("🚫 [SECURITY] Bot detected by BotID. Access DENIED.");
+        return NextResponse.json(
+          { error: "Access denied. Bot detected." },
+          { status: 403 },
+        );
+      }
+      console.log(
+        "✅ [SECURITY] BotID check passed. Request appears to be from a human.",
+      );
+
+      const forwarded = req.headers.get("x-forwarded-for");
+      const realIp = req.headers.get("x-real-ip");
+
+      console.log(
+        `[SECURITY-DEBUG] x-forwarded-for header: ${forwarded ?? "null"}`,
+      );
+      console.log(`[SECURITY-DEBUG] x-real-ip header: ${realIp ?? "null"}`);
+
+      const ip = forwarded ? forwarded.split(/, /)[0] : realIp;
+      const identifier = ip ?? "127.0.0.1";
+      console.log(
+        `👤 [SECURITY] Identifier for rate limiting is: ${identifier}`,
+      );
+
+      console.log("⏳ [SECURITY] Performing rate limit check with Upstash...");
+      const { success } = await ratelimit.limit(identifier);
+
+      if (!success) {
+        console.warn(
+          `🚫 [SECURITY] Rate limit EXCEEDED for identifier: ${identifier}. Access DENIED.`,
+        );
+        return NextResponse.json(
+          { error: "Too many requests. Please try again later." },
+          { status: 429 },
+        );
+      }
+      console.log("✅ [SECURITY] Rate limit check passed.");
+    }
+
+    const headers: Record<string, string> = {
+      "X-Title": "CEFR Text Evaluation App",
+    };
+
+    if (req) {
+      const host = req.headers.get("host") ?? "localhost";
+      const protocol = host.includes("localhost") ? "http" : "https";
+      const baseUrl = `${protocol}://${host}`;
+      headers["HTTP-Referer"] = baseUrl;
+    }
+
+    const openrouter = createOpenRouter({
+      apiKey: env.OPENROUTER_API_KEY,
+      headers: headers,
+    });
+
     const body: unknown = await req.json();
 
     const parseResult = evaluateRequestSchema.safeParse(body);
@@ -30,20 +108,6 @@ export async function POST(req: Request) {
     }
 
     const { text, taskDescription } = parseResult.data;
-
-    console.log(
-      "USER PROMPT: ",
-      `The user was given the following task:
-      --- TASK DESCRIPTION ---
-      ${taskDescription}
-      ------------------------
-
-      Here is the user's response to the task. Please evaluate it for its CEFR level and provide detailed feedback.
-      
-      --- USER TEXT ---
-      ${text}
-      -----------------`,
-    );
 
     const result = streamObject({
       model: openrouter.chat("google/gemini-2.0-flash-001"),
