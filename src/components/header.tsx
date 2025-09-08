@@ -12,7 +12,7 @@ export default function Header({
   activeTask,
 }: HeaderProps) {
   return (
-    <header className="flex w-full items-center justify-between border-b p-3">
+    <header className="bg-background/20 sticky top-0 flex w-full items-center justify-between border-b p-3 backdrop-blur-md">
       <div className="flex gap-4">
         <SidebarTrigger />
         <h1 className="text-xl font-semibold">
