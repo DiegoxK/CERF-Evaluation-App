@@ -8,15 +8,9 @@ import {
   SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
-  SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import {
-  ChevronDown,
-  CornerDownRight,
-  PenSquare,
-  PlusCircle,
-} from "lucide-react";
+import { ChevronDown, PenSquare, PlusCircle } from "lucide-react";
 import {
   Collapsible,
   CollapsibleContent,
@@ -26,10 +20,10 @@ import {
 import { useAppStore } from "@/hooks/store";
 import { tasks } from "@/lib/tasks";
 import { Button } from "@/components/ui/button";
+import { EvaluationMenuItem } from "./evaluation-menu-item";
 
 export function AppSidebar() {
-  const { evaluations, viewEvaluation, startNewTask, clearActive } =
-    useAppStore();
+  const { evaluations, startNewTask, clearActive } = useAppStore();
 
   return (
     <Sidebar>
@@ -64,13 +58,7 @@ export function AppSidebar() {
                       .filter((evaluation) => evaluation.taskId === task.id)
                       .map((evaluation) => (
                         <SidebarMenuItem key={evaluation.id}>
-                          <SidebarMenuButton
-                            onClick={() => viewEvaluation(evaluation.id)}
-                            className="cursor-pointer"
-                          >
-                            <CornerDownRight className="opacity-50" />
-                            {evaluation.title}
-                          </SidebarMenuButton>
+                          <EvaluationMenuItem evaluation={evaluation} />
                         </SidebarMenuItem>
                       ))}
                     <SidebarMenuItem>
