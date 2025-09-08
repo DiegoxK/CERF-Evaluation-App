@@ -12,13 +12,15 @@ export const maxDuration = 60;
 
 const ratelimit = new Ratelimit({
   redis: Redis.fromEnv(),
-  limiter: Ratelimit.slidingWindow(5, "5 m"),
+  limiter: Ratelimit.slidingWindow(5, "1 d"),
   analytics: true,
   prefix: "@upstash/ratelimit",
 });
 
 export async function POST(req: NextRequest) {
   try {
+    let rateLimitHeaders: Record<string, string> = {};
+
     console.log("\n🛡️  Initiating security checks for incoming request...");
 
     const authorizationHeader = req.headers.get("Authorization");
@@ -63,15 +65,20 @@ export async function POST(req: NextRequest) {
       );
 
       console.log("⏳ [SECURITY] Performing rate limit check with Upstash...");
-      const { success } = await ratelimit.limit(identifier);
+      const { success, limit, remaining, reset } =
+        await ratelimit.limit(identifier);
+
+      rateLimitHeaders = {
+        "X-RateLimit-Limit": limit.toString(),
+        "X-RateLimit-Remaining": remaining.toString(),
+        "X-RateLimit-Reset": reset.toString(),
+      };
 
       if (!success) {
-        console.warn(
-          `🚫 [SECURITY] Rate limit EXCEEDED for identifier: ${identifier}. Access DENIED.`,
-        );
+        console.warn(`🚫 [SECURITY] Rate limit EXCEEDED...`);
         return NextResponse.json(
           { error: "Too many requests. Please try again later." },
-          { status: 429 },
+          { status: 429, headers: rateLimitHeaders },
         );
       }
       console.log("✅ [SECURITY] Rate limit check passed.");
@@ -169,7 +176,12 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    return result.toTextStreamResponse();
+    const response = result.toTextStreamResponse();
+    Object.entries(rateLimitHeaders).forEach(([key, value]) => {
+      response.headers.set(key, value);
+    });
+
+    return response;
   } catch (error) {
     if (error instanceof SyntaxError) {
       return new Response(JSON.stringify({ error: "Invalid JSON format" }), {
