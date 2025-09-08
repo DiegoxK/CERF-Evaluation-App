@@ -29,7 +29,21 @@ export async function POST(req: Request) {
       );
     }
 
-    const { text } = parseResult.data;
+    const { text, taskDescription } = parseResult.data;
+
+    console.log(
+      "USER PROMPT: ",
+      `The user was given the following task:
+      --- TASK DESCRIPTION ---
+      ${taskDescription}
+      ------------------------
+
+      Here is the user's response to the task. Please evaluate it for its CEFR level and provide detailed feedback.
+      
+      --- USER TEXT ---
+      ${text}
+      -----------------`,
+    );
 
     const result = streamObject({
       model: openrouter.chat("google/gemini-2.0-flash-001"),
@@ -69,7 +83,16 @@ export async function POST(req: Request) {
           }
         ]
       }`,
-      prompt: `Please evaluate the following text for its CEFR level and provide detailed feedback:\n\n---\n\n${text}`,
+      prompt: `The user was given the following task:
+      --- TASK DESCRIPTION ---
+      ${taskDescription}
+      ------------------------
+
+      Here is the user's response to the task. Please evaluate it for its CEFR level and provide detailed feedback.
+      
+      --- USER TEXT ---
+      ${text}
+      -----------------`,
       temperature: 0.3,
       onError: (error) => {
         if (error instanceof AISDKError) {
