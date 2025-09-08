@@ -17,7 +17,7 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 
-import { useAppStore } from "@/hooks/store";
+import { useAppStore } from "@/hooks/app-store";
 import { tasks } from "@/lib/tasks";
 import { Button } from "@/components/ui/button";
 import { EvaluationMenuItem } from "./evaluation-menu-item";

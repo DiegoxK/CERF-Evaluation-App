@@ -7,10 +7,18 @@ import {
   Waypoints,
   Scale,
   Heart,
+  Star,
 } from "lucide-react";
 import { type Task } from "@/lib/types";
 
 export const tasks: Task[] = [
+  {
+    id: "free-writing",
+    title: "Free Writing",
+    icon: Star,
+    description:
+      "Write about anything you like. This is a great way to practice your general writing skills without a specific prompt. Describe your day, your hobbies, or your opinion on a topic.",
+  },
   {
     id: "start-conversation",
     title: "Start a conversation",

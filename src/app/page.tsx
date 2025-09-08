@@ -1,7 +1,7 @@
 "use client";
 
 import Header from "@/components/header";
-import { useAppStore } from "@/hooks/store";
+import { useAppStore } from "@/hooks/app-store";
 import { useSettingsStore } from "@/hooks/settings-store";
 import { useRateLimitStore } from "@/hooks/ratelimit-store";
 import { EvaluationReport } from "./_components/evaluation-report";

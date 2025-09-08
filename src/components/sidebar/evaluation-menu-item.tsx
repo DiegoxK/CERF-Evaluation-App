@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useAppStore } from "@/hooks/store";
+import { useAppStore } from "@/hooks/app-store";
 import { type Evaluation } from "@/lib/types";
 import { CornerDownRight, MoreHorizontal, Pencil, Trash2 } from "lucide-react";
 import { SidebarMenuButton } from "@/components/ui/sidebar";
