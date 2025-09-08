@@ -144,7 +144,7 @@ export const EvaluationReport = ({
             />
           </CardContent>
         </Card>
-        <Card>
+        <Card className="h-fit">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <MessageSquareText size={20} /> Overall Feedback
