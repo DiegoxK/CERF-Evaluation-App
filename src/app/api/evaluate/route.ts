@@ -77,10 +77,11 @@ export async function POST(req: NextRequest) {
       if (!success) {
         console.warn(`🚫 [SECURITY] Rate limit EXCEEDED...`);
         return NextResponse.json(
-          { error: "Too many requests. Please try again later." },
+          { error: "Daily limit exceeded. Please try again tomorrow." },
           { status: 429, headers: rateLimitHeaders },
         );
       }
+
       console.log("✅ [SECURITY] Rate limit check passed.");
     }
 
