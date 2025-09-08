@@ -35,7 +35,7 @@ export const WelcomeView = () => {
     <div className="animate-fade-in mx-auto flex max-w-4xl flex-col items-center space-y-12 py-8 text-center">
       <div className="space-y-4">
         <h1 className="from-primary bg-gradient-to-r to-purple-500 bg-clip-text text-4xl font-bold tracking-tight text-transparent md:text-5xl">
-          Unlock Your English Proficiency
+          Your English Proficiency Test
         </h1>
         <p className="text-muted-foreground max-w-2xl text-lg">
           Get instant, AI-powered feedback on your writing. This app analyzes
