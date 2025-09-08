@@ -3,6 +3,35 @@
 
 @custom-variant dark (&:is(.dark *));
 
+::selection {
+  background: var(--secondary);
+  color: var(--secondary-foreground);
+}
+::-moz-selection {
+  background: var(--secondary);
+  color: var(--secondary-foreground);
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: rgba(100, 100, 100, 0.4);
+  border-radius: 9999px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(100, 100, 100, 0.6);
+}
+
 :root {
   --background: oklch(1 0 0);
   --foreground: oklch(0.3211 0 0);
