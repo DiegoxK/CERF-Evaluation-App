@@ -5,6 +5,7 @@ import { Textarea } from "@/components/ui/textarea";
 import type { Task } from "@/lib/types";
 import { useState } from "react";
 import { TaskDescriptionCard } from "./ui/task-description-card";
+import { useRateLimitStore } from "@/hooks/ratelimit-store";
 
 interface TaskViewProps {
   task: Task;
@@ -13,6 +14,8 @@ interface TaskViewProps {
 
 export const TaskView = ({ task, onEvaluate }: TaskViewProps) => {
   const [textValue, setTextValue] = useState("");
+
+  const { limit, remaining } = useRateLimitStore();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -34,8 +37,13 @@ export const TaskView = ({ task, onEvaluate }: TaskViewProps) => {
         />
       </div>
 
-      <div className="mt-4 flex justify-end">
-        <Button type="submit" disabled={!textValue.trim()}>
+      <div className="mt-4 flex items-center justify-end gap-4">
+        {remaining !== null && limit !== null && (
+          <p className="text-muted-foreground text-sm">
+            {remaining} / {limit} evaluations remaining today
+          </p>
+        )}
+        <Button type="submit" disabled={!textValue.trim() || remaining === 0}>
           Evaluate Text
         </Button>
       </div>
