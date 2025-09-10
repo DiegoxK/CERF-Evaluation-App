@@ -1,7 +1,7 @@
 
 # AI Language Evaluator: Instant CEFR Feedback
 
-**AI Language Evaluator** is a full-stack web application designed to provide language learners with instant, detailed, and actionable feedback on their English writing. By leveraging a powerful Large Language Model, it acts as an on-demand AI tutor, analyzing text against the **Common European Framework of Reference for Languages (CEFR)** to help users improve their skills effectively.
+**CERF-Evaluation-App** is a full-stack web application designed to provide language learners with instant, detailed, and actionable feedback on their English writing. By leveraging a powerful Large Language Model, it acts as an on-demand AI tutor, analyzing text against the **Common European Framework of Reference for Languages (CEFR)** to help users improve their skills effectively.
 
 This project was built from the ground up to showcase a modern, secure, and highly interactive web application that solves a real-world problem for language learners. It demonstrates advanced concepts like real-time data streaming, multi-layered API security, and complex state management.
 
@@ -133,3 +133,4 @@ INTERNAL_API_SECRET=""
 **Diego Suarez** - [SynthCode](https://www.synthcode.net/en/about)
 
 *   **Email:** [diego.synthcode@gmail.com](mailto:diego.synthcode@gmail.com)
+
